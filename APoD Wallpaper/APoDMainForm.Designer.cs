@@ -183,11 +183,12 @@ namespace APoD_Wallpaper
             // 
             this.lbll_copyright_program.Location = new System.Drawing.Point(12, 414);
             this.lbll_copyright_program.Name = "lbll_copyright_program";
-            this.lbll_copyright_program.Size = new System.Drawing.Size(241, 23);
+            this.lbll_copyright_program.Size = new System.Drawing.Size(241, 13);
             this.lbll_copyright_program.TabIndex = 10;
             this.lbll_copyright_program.TabStop = true;
             this.lbll_copyright_program.Text = "Help and Source Code is available on BitBucket";
             this.lbll_copyright_program.VisitedLinkColor = System.Drawing.Color.Blue;
+            this.lbll_copyright_program.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbll_copyright_program_LinkClicked);
             // 
             // APoDMainForm
             // 

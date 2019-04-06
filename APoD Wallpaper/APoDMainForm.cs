@@ -37,18 +37,20 @@ namespace APoD_Wallpaper
 
         private void lbll_copyright_imgsAndTxts_LinkClicked(object sender, System.Windows.Forms.LinkLabelLinkClickedEventArgs e)
         {
-                VisitLink(lbll_copyright_imgsAndTxts, "https://apod.nasa.gov/apod/ap_faq.html");
+            visitLink(lbll_copyright_imgsAndTxts, "https://apod.nasa.gov/apod/ap_faq.html");
         }
 
-        private void VisitLink(LinkLabel ll, string lnk)
+        private void lbll_copyright_program_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e) {
+            visitLink(lbll_copyright_program, "https://bitbucket.org/Micky261/apod-wallpaper/");
+        }
+
+        private void visitLink(LinkLabel ll, string lnk)
         {
-            try
-            {
+            try {
                 ll.LinkVisited = true;
                 System.Diagnostics.Process.Start(lnk);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 MessageBox.Show("Unable to open link.");
             }
         }
