@@ -89,5 +89,18 @@ namespace APoD_Wallpaper
                 tbox_setFilePath.Text = folderName;
             }
         }
+
+        private void openImageFolderToolStripMenuItem_Click(object sender, EventArgs e) {
+            Process.Start(Properties.Settings.Default.FilePath);
+        }
+
+        public void changeExplanation(string date, string expl) {
+            explanationToolStripMenuItem.ToolTipText = date + ": \r\n" + expl;
+        }
+
+        private void updateImageToolStripMenuItem_Click(object sender, EventArgs e) {
+            Program.setWallpaper();
+
+        }
     }
 }

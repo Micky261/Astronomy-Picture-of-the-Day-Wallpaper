@@ -34,7 +34,9 @@ namespace APoD_Wallpaper
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(APoDMainForm));
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.trayContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.explanationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openImageFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.updateImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lbl_setFilePath = new System.Windows.Forms.Label();
@@ -62,31 +64,52 @@ namespace APoD_Wallpaper
             // trayContextMenu
             // 
             this.trayContextMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.explanationToolStripMenuItem,
             this.openToolStripMenuItem,
+            this.openImageFolderToolStripMenuItem,
             this.updateImageToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.trayContextMenu.Name = "trayContextMenu";
-            this.trayContextMenu.Size = new System.Drawing.Size(149, 70);
+            this.trayContextMenu.Size = new System.Drawing.Size(209, 114);
+            // 
+            // explanationToolStripMenuItem
+            // 
+            this.explanationToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.explanationToolStripMenuItem.Enabled = false;
+            this.explanationToolStripMenuItem.Name = "explanationToolStripMenuItem";
+            this.explanationToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.explanationToolStripMenuItem.Text = "Explanation (Mouse over)";
             // 
             // openToolStripMenuItem
             // 
+            this.openToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.openToolStripMenuItem.Text = "Open";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openToolStripMenuItem.Text = "Open settings";
             this.openToolStripMenuItem.ToolTipText = "Open Settings-Window";
+            // 
+            // openImageFolderToolStripMenuItem
+            // 
+            this.openImageFolderToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.openImageFolderToolStripMenuItem.Name = "openImageFolderToolStripMenuItem";
+            this.openImageFolderToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
+            this.openImageFolderToolStripMenuItem.Text = "Open image folder";
+            this.openImageFolderToolStripMenuItem.Click += new System.EventHandler(this.openImageFolderToolStripMenuItem_Click);
             // 
             // updateImageToolStripMenuItem
             // 
+            this.updateImageToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.updateImageToolStripMenuItem.Name = "updateImageToolStripMenuItem";
-            this.updateImageToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.updateImageToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.updateImageToolStripMenuItem.Text = "Update image";
+            this.updateImageToolStripMenuItem.Click += new System.EventHandler(this.updateImageToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
+            this.exitToolStripMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.ToolTipText = "Will";
             // 
             // lbl_setFilePath
             // 
@@ -121,9 +144,10 @@ namespace APoD_Wallpaper
             this.cbox_keepImages.AutoSize = true;
             this.cbox_keepImages.Location = new System.Drawing.Point(18, 77);
             this.cbox_keepImages.Name = "cbox_keepImages";
-            this.cbox_keepImages.Size = new System.Drawing.Size(388, 17);
+            this.cbox_keepImages.Size = new System.Drawing.Size(263, 43);
             this.cbox_keepImages.TabIndex = 4;
-            this.cbox_keepImages.Text = "Keep downloaded images (if unchecked they will be deleted on the next day)";
+            this.cbox_keepImages.Text = "Keep downloaded images\r\n(if unchecked they will be deleted on the next day,\r\nif c" +
+    "hecked deletes all files in folder)";
             this.cbox_keepImages.UseVisualStyleBackColor = true;
             this.cbox_keepImages.CheckedChanged += new System.EventHandler(this.cbox_keepImages_CheckedChanged);
             // 
@@ -244,6 +268,8 @@ namespace APoD_Wallpaper
         private CheckBox cbox_textOnImages;
         private LinkLabel lbll_copyright_program;
         private FolderBrowserDialog oFile_setFilePath;
+        private ToolStripMenuItem openImageFolderToolStripMenuItem;
+        private ToolStripMenuItem explanationToolStripMenuItem;
     }
 }
 
