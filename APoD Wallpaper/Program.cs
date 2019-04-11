@@ -1,77 +1,100 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Forms;
 
-namespace APoD_Wallpaper
-{
-    static class Program
-    {
+namespace APoD_Wallpaper {
     public enum Style : int {
         Tiled,
         Centered,
         Stretched
     }
+
+    static class Program {
+        static string picText;
+        static string picPath;
+        static APoDMainForm form;
+        static DateTime lastDownload;
+
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
         [STAThread]
-        static void Main()
-        {
-            startBackgroundTasks();
-            setWallpaper(null, null);
+        static void Main() {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new APoDMainForm());
+            form = new APoDMainForm();
+
+            startBackgroundTasks();
+            setWallpaper();
+
+            Application.Run(form);
         }
 
-        static void startBackgroundTasks() {
+        private static void startBackgroundTasks() {
             System.Timers.Timer timer = new System.Timers.Timer(TimeSpan.FromHours(1).TotalMilliseconds);
             timer.AutoReset = true;
             timer.Elapsed += new System.Timers.ElapsedEventHandler(setWallpaper);
             timer.Start();
         }
 
-        private static void setWallpaper(object sender, ElapsedEventArgs e) {
-            tryDownload();
+        public static void setWallpaper(object sender, ElapsedEventArgs e) {
+            setWallpaper();
         }
 
-        private static void tryDownload() {
+        public static void setWallpaper() {
             string today = DateTime.Today.ToString("yyyy MMMM d", new CultureInfo("en-US"));
 
-            string webContent = getWebpage();
-            string pictureURL = getPictureURL(webContent, today);
-            string pictureText = null;
+            //Process webpage, download image and extract text
+            tryDownload(DateTime.Today);
 
-            if (Properties.Settings.Default.TextOnImages)
-                pictureText = tidyUpNewLines(removeLinks(getPictureText(webContent)));
-            
-            using (WebClient webClient = new WebClient()) {
-                string filename = Properties.Settings.Default.FilePath + "\\" + today + pictureURL.Substring(pictureURL.LastIndexOf("."));
-                webClient.DownloadFile(pictureURL, filename);
+            //Set Wallpaper in Windows
+            Style s;
+
+            switch (Properties.Settings.Default.BackgroundFilling) {
+                case "Tiled": s = Style.Tiled; break;
+                case "Centered": s = Style.Centered; break;
+                default: s = Style.Stretched; break;
             }
-            //## Add text
+
+            Wallpaper.set(picPath, s);
+
+            //Set explanation in Tray Icon
+            form.changeExplanation(today, picText);
         }
 
-        private static string tidyUpNewLines(string text) {
-            return Regex.Replace(text, "([^\r\n])\u000D\u000A|[\u000A\u000B\u000C\u000D\u0085\u2028\u2029](?=[^\r\n])", "$1 ").Replace("\n ", "\n");
-        }
+        private static void tryDownload(DateTime today) {
+            try {
+                string day = today.ToString("yyyy MMMM d", new CultureInfo("en-US"));
 
-        private static string removeLinks(string text) {
-            return Regex.Replace(text, @"<[^>]*>", "");
+                string webContent = getWebpage(today);
+                string pictureURL = getPictureURL(webContent, day);
+                picText = Utilities.tidyUpNewLines(Utilities.removeHTMLTags(getPictureText(webContent)));
+
+                using (WebClient webClient = new WebClient()) {
+                    picPath = Properties.Settings.Default.FilePath + "\\" + day + pictureURL.Substring(pictureURL.LastIndexOf("."));
+                    if (DateTime.Compare(lastDownload, today) < 0)
+                        webClient.DownloadFile(pictureURL, picPath);
+                }
+
+                lastDownload = today;
+                //## Add text
+                //if (Properties.Settings.Default.TextOnImages)
+            } catch (Exception ex) {
+                tryDownload(today.AddDays(-1));
+            }
         }
 
         private static string getPictureText(string webContent) {
-            int indexOfExplanation = webContent.IndexOf("<b> Explanation: </b>") + "<b> Explanation: </b>\n\n".Length;
-            int indexOfTextEnd = indexOfExplanation + webContent.Substring(indexOfExplanation).IndexOf("<p><center>");
+            int indexOfExplanation = webContent.IndexOf("<b> Explanation: </b>") + "<b> Explanation: </b>\n".Length;
+            int indexOfTextEnd = indexOfExplanation + Regex.Match(webContent.Substring(indexOfExplanation), @"<p>[ ]*<center>").Index /*webContent.Substring(indexOfExplanation).IndexOf("<p> <center>")*/;
 
             string expl = webContent.Substring(indexOfExplanation, indexOfTextEnd - indexOfExplanation);
 
@@ -79,11 +102,11 @@ namespace APoD_Wallpaper
         }
 
         private static string getPictureURL(string webContent, string today) {
-            int indexOfDate                 = webContent.IndexOf(today);
-            int indexOfLink                 = indexOfDate + webContent.Substring(indexOfDate).IndexOf("href") + 6; //6 for \\ href=" //
-            int indexOfClosingApostrophe    = indexOfLink + webContent.Substring(indexOfLink).IndexOf("\"");
+            int indexOfDate = webContent.Substring(100).IndexOf(today) + 100;
+            int indexOfLink = indexOfDate + webContent.Substring(indexOfDate).IndexOf("href") + 6; //6 for \\ href=" //
+            int indexOfClosingApostrophe = indexOfLink + webContent.Substring(indexOfLink).IndexOf("\"");
 
-            string url                      = webContent.Substring(indexOfLink, indexOfClosingApostrophe - indexOfLink);
+            string url = webContent.Substring(indexOfLink, indexOfClosingApostrophe - indexOfLink);
 
             if (url.StartsWith("ftp") || url.StartsWith("http"))
                 return url;
@@ -91,11 +114,12 @@ namespace APoD_Wallpaper
                 return "https://apod.nasa.gov/apod/" + url;
         }
 
-        private static string getWebpage() {
-            string urlAddress = "https://apod.nasa.gov/apod/astropix.html";
+        private static string getWebpage(DateTime today) {
+            string day = today.ToString("yMMdd", new CultureInfo("en-US"));
+            string urlAddress = "https://apod.nasa.gov/apod/ap" + day + ".html";
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            HttpWebRequest request = (HttpWebRequest) WebRequest.Create(urlAddress);
+            HttpWebResponse response = (HttpWebResponse) request.GetResponse();
 
             string data = null;
 
