@@ -1,18 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace APoD_Wallpaper
 {
     public partial class APoDMainForm : Form
     {
+        bool started = false;
         public APoDMainForm()
         {
             InitializeComponent();
@@ -20,6 +14,9 @@ namespace APoD_Wallpaper
             tbox_setFilePath.Text = Properties.Settings.Default.FilePath;
             cbox_keepImages.Checked = Properties.Settings.Default.KeepImages;
             cbox_textOnImages.Checked = Properties.Settings.Default.TextOnImages;
+            sbox_chooseBGFilling.SelectedItem = Properties.Settings.Default.BackgroundFilling;
+
+            started = true;
         }
 
         private void trayIcon_DoubleClick(object sender,
@@ -101,6 +98,13 @@ namespace APoD_Wallpaper
         private void updateImageToolStripMenuItem_Click(object sender, EventArgs e) {
             Program.setWallpaper();
 
+        }
+
+        private void sbox_chooseBGFilling_SelectedIndexChanged(object sender, EventArgs e) {
+            Properties.Settings.Default.BackgroundFilling = sbox_chooseBGFilling.SelectedItem.ToString();
+            Properties.Settings.Default.Save();
+
+            if (started) Program.setWallpaper();
         }
     }
 }

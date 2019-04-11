@@ -50,6 +50,8 @@ namespace APoD_Wallpaper
             this.cbox_textOnImages = new System.Windows.Forms.CheckBox();
             this.lbll_copyright_program = new System.Windows.Forms.LinkLabel();
             this.oFile_setFilePath = new System.Windows.Forms.FolderBrowserDialog();
+            this.sbox_chooseBGFilling = new System.Windows.Forms.ComboBox();
+            this.lbl_chooseBGFilling = new System.Windows.Forms.Label();
             this.trayContextMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -214,11 +216,35 @@ namespace APoD_Wallpaper
             this.lbll_copyright_program.VisitedLinkColor = System.Drawing.Color.Blue;
             this.lbll_copyright_program.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lbll_copyright_program_LinkClicked);
             // 
+            // sbox_chooseBGFilling
+            // 
+            this.sbox_chooseBGFilling.FormattingEnabled = true;
+            this.sbox_chooseBGFilling.Items.AddRange(new object[] {
+            "Stretched",
+            "Tiled",
+            "Centered"});
+            this.sbox_chooseBGFilling.Location = new System.Drawing.Point(140, 153);
+            this.sbox_chooseBGFilling.Name = "sbox_chooseBGFilling";
+            this.sbox_chooseBGFilling.Size = new System.Drawing.Size(121, 21);
+            this.sbox_chooseBGFilling.TabIndex = 11;
+            this.sbox_chooseBGFilling.SelectedIndexChanged += new System.EventHandler(this.sbox_chooseBGFilling_SelectedIndexChanged);
+            // 
+            // lbl_chooseBGFilling
+            // 
+            this.lbl_chooseBGFilling.AutoSize = true;
+            this.lbl_chooseBGFilling.Location = new System.Drawing.Point(15, 156);
+            this.lbl_chooseBGFilling.Name = "lbl_chooseBGFilling";
+            this.lbl_chooseBGFilling.Size = new System.Drawing.Size(119, 13);
+            this.lbl_chooseBGFilling.TabIndex = 12;
+            this.lbl_chooseBGFilling.Text = "How to fill background?";
+            // 
             // APoDMainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(445, 450);
+            this.Controls.Add(this.lbl_chooseBGFilling);
+            this.Controls.Add(this.sbox_chooseBGFilling);
             this.Controls.Add(this.lbll_copyright_program);
             this.Controls.Add(this.cbox_textOnImages);
             this.Controls.Add(this.lbl_copyright_imgsAndTxts);
@@ -270,6 +296,8 @@ namespace APoD_Wallpaper
         private FolderBrowserDialog oFile_setFilePath;
         private ToolStripMenuItem openImageFolderToolStripMenuItem;
         private ToolStripMenuItem explanationToolStripMenuItem;
+        private ComboBox sbox_chooseBGFilling;
+        private Label lbl_chooseBGFilling;
     }
 }
 
