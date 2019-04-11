@@ -112,4 +112,15 @@ namespace APoD_Wallpaper
             return data;
         }
     }
+
+    static class Utilities {
+        public static string tidyUpNewLines(string text) {
+            return Regex.Replace(text, "([^\r\n])\u000D\u000A|[\u000A\u000B\u000C\u000D\u0085\u2028\u2029](?=[^\r\n])", "$1 ").Replace("\n ", "\n").Replace("  ", " ");
+            ;
+        }
+
+        public static string removeHTMLTags(string text) {
+            return Regex.Replace(text, @"<[^>]*>", "");
+        }
+    }
 }
