@@ -15,6 +15,11 @@ namespace APoD_Wallpaper
 {
     static class Program
     {
+    public enum Style : int {
+        Tiled,
+        Centered,
+        Stretched
+    }
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
@@ -121,6 +126,47 @@ namespace APoD_Wallpaper
 
         public static string removeHTMLTags(string text) {
             return Regex.Replace(text, @"<[^>]*>", "");
+        }
+    }
+
+    static class Wallpaper {
+        const int SPI_SETDESKWALLPAPER = 20;
+        const int SPIF_UPDATEINIFILE = 0x01;
+        const int SPIF_SENDWININICHANGE = 0x02;
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
+
+        public static void set(string filePath, Style style) {
+            string tempPath = "";
+
+            using (System.Drawing.Image img = System.Drawing.Image.FromFile(Path.GetFullPath(filePath))) {
+                tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
+                img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Bmp);
+            }
+
+            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
+
+            if (style == Style.Stretched) {
+                key.SetValue(@"WallpaperStyle", 2.ToString());
+                key.SetValue(@"TileWallpaper", 0.ToString());
+            }
+
+            if (style == Style.Centered) {
+                key.SetValue(@"WallpaperStyle", 1.ToString());
+                key.SetValue(@"TileWallpaper", 0.ToString());
+            }
+
+            if (style == Style.Tiled) {
+                key.SetValue(@"WallpaperStyle", 1.ToString());
+                key.SetValue(@"TileWallpaper", 1.ToString());
+            }
+
+            SystemParametersInfo(SPI_SETDESKWALLPAPER,
+                0,
+                tempPath,
+                SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
+
         }
     }
 }
