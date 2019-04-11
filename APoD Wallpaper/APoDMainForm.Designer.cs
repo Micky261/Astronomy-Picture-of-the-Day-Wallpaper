@@ -197,7 +197,8 @@ namespace APoD_Wallpaper
             // cbox_textOnImages
             // 
             this.cbox_textOnImages.AutoSize = true;
-            this.cbox_textOnImages.Location = new System.Drawing.Point(18, 100);
+            this.cbox_textOnImages.Enabled = false;
+            this.cbox_textOnImages.Location = new System.Drawing.Point(18, 126);
             this.cbox_textOnImages.Name = "cbox_textOnImages";
             this.cbox_textOnImages.Size = new System.Drawing.Size(298, 17);
             this.cbox_textOnImages.TabIndex = 9;
